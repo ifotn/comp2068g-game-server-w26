@@ -61,7 +61,35 @@ router.post('/', (req: Request, res: Response) => {
     return res.status(201).json(); // 201: resource created
 });
 
-/* PUT: /api/v1/games/35 */
+/**
+ * @swagger
+ * /api/v1/games/{id}:
+ *  put:
+ *    summary: Update a game by id
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *        required: true
+ *        description: Numeric id of the game to update
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              id:
+ *                type: integer
+ *              title:
+ *                type: string
+ *    responses:
+ *      204:
+ *        description: Game updated successfully
+ *      404:
+ *        description: Game not found
+ */
 router.put('/:id', (req: Request, res: Response) => {
     // search array for id in url param.  Use == as req.params has a type of "any"
     const index: number = games.findIndex(g => g.id == req.params.id);
@@ -74,7 +102,24 @@ router.put('/:id', (req: Request, res: Response) => {
     return res.status(204).json({ 'msg': 'Game Updated' }); // 204: No Content
 });
 
-/* DELETE: /api/v1/games/35 */
+/**
+ * @swagger
+ * /api/v1/games/{id}:
+ *  delete:
+ *    summary: Remove a game by id
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *        required: true
+ *        description: Numeric id of the game to delete
+ *    responses:
+ *      204:
+ *        description: Game deleted successfully
+ *      404:
+ *        description: Game not found
+ */
 router.delete('/:id', (req: Request, res: Response) => {
      // search array for id in url param.  Use == as req.params has a type of "any"
     const index: number = games.findIndex(g => g.id == req.params.id);
