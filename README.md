@@ -13,3 +13,5 @@
 `npm run dev` - run app in dev mode using nodemon to watch for changes
 
 `npm i body-parser` - needed to read body of HTTP POST & PUT requests
+
+`npm i swagger-jsdoc swagger-ui-express` - Swagger API doc generator

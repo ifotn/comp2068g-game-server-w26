@@ -15,12 +15,41 @@ let games: Game[] = [
     { id: 3, title: 'Donkey Kong Country Returns' }
 ];
 
-/* GET: /api/v1/games */
+/**
+ * @swagger
+ * /api/v1/games:
+ *   get:
+ *     summary: Retrieve all games
+ *     responses:
+ *       200:
+ *         description: A list of games
+ */
 router.get('/', (req: Request, res: Response) => {
     return res.status(200).json(games);
 });
 
-/* POST: /api/v1/games */
+/**
+ * @swagger
+ * /api/v1/games:
+ *   post:
+ *     summary: Create a new game
+ *     requestBody: 
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *               title:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Game created
+ *       400:
+ *         description: Bad request
+ */
 router.post('/', (req: Request, res: Response) => {
     if (!req.body) {
         return res.status(400).json({ 'err': 'Invalid Request Body' }); // 400: Bad Request
