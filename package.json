@@ -14,9 +14,13 @@
   "dependencies": {
     "body-parser": "^2.2.2",
     "express": "^5.2.1",
+    "mongoose": "^9.1.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "ts-node": "^1.7.1",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10"
   }
 }

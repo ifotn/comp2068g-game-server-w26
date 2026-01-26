@@ -15,3 +15,9 @@
 `npm i body-parser` - needed to read body of HTTP POST & PUT requests
 
 `npm i swagger-jsdoc swagger-ui-express` - Swagger API doc generator
+
+## Lesson 4 NPM Commands
+
+`npm i mongoose` - data access lib for MongoDB.  Used in Models
+
+`npm i @types/node --save-dev` - to access "process" obj when reading env vars
