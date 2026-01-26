@@ -26,5 +26,16 @@ const options = {
     apis: ['./dist/controllers/*.js'] // location of api methods
 };
 const openApiSpecs = (0, swagger_jsdoc_1.default)(options);
-app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(openApiSpecs));
+app.use('/api-docs', swagger_ui_express_1.default.serve);
+// hard-code swagger css & js links using public Content Delivery Network (CDN)
+app.get('/api-docs', (req, res) => {
+    const html = swagger_ui_express_1.default.generateHTML(openApiSpecs, {
+        customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
+        customJs: [
+            'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js'
+        ]
+    });
+    res.send(html);
+});
 app.listen(4000, () => { console.log('Server running on port 4000'); });
