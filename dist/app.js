@@ -9,7 +9,7 @@ const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc")); // api doc ge
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const mongoose_1 = __importDefault(require("mongoose")); // mongodb access lib
 // controllers
-const games_1 = __importDefault(require("./controllers/games"));
+const gamesRoutes_1 = __importDefault(require("./routes/gamesRoutes"));
 const app = (0, express_1.default)();
 // configure app globally to parse http request bodies as json
 app.use(body_parser_1.default.json());
@@ -19,7 +19,7 @@ mongoose_1.default.connect(dbUri)
     .then(() => { console.log('Connected to MongoDB'); })
     .catch((err) => { console.log(`Connection Failed: ${err.message}`); });
 // url dispatching
-app.use('/api/v1/games', games_1.default);
+app.use('/api/v1/games', gamesRoutes_1.default);
 // swagger api doc config
 const options = {
     definition: {

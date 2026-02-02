@@ -5,7 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 import mongoose from 'mongoose';  // mongodb access lib
 
 // controllers
-import games from './controllers/games';
+import gamesRouter from './routes/gamesRoutes';
 
 const app: Application = express();
 
@@ -20,7 +20,7 @@ mongoose.connect(dbUri)
 .catch((err: Error) => { console.log(`Connection Failed: ${err.message}`) });
 
 // url dispatching
-app.use('/api/v1/games', games);
+app.use('/api/v1/games', gamesRouter);
 
 // swagger api doc config
 const options = {
