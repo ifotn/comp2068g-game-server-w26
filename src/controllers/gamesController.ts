@@ -124,6 +124,38 @@ export const deleteGame = async (req: Request, res: Response) => {
      return res.status(204).json({ 'msg': 'Game Deleted' }); // 204: No Content
 };
 
+/**
+ * @swagger
+ * /games/{id}/reviews:
+ *   put:
+ *     summary: Create a review for a game
+ *     description: Adds a new review to the specified game.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the game being reviewed
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               reviewer:
+ *                 type: string
+ *                 description: author of review
+ *               reviewText:
+ *                 type: string
+ *               rating:
+ *                 type: number
+ *                 description: 1-5 score
+ *     responses:
+ *       204:
+ *         description: Review created successfully.
+ */
 export const createReview = async (req: Request, res: Response) => {
     // get id param from url 
     const id = req.params.id;
