@@ -95,20 +95,18 @@ router.post('/', async (req: Request, res: Response) => {
  *    responses:
  *      204:
  *        description: Game updated successfully
- *      404:
- *        description: Game not found
+ *      400:
+ *        description: Id missing - Bad Requests
  */
-// router.put('/:id', (req: Request, res: Response) => {
-//     // search array for id in url param.  Use == as req.params has a type of "any"
-//     const index: number = games.findIndex(g => g.id == req.params.id);
+router.put('/:id', async (req: Request, res: Response) => {
+    // validate we have an id value
+    if (!req.params.id) {
+        return res.status(400).json({ 'error': 'Bad Request - Id parameter missing' });
+    }
 
-//     if (index === -1) {
-//         return res.status(404).json({ 'err': 'Game Not Found' });
-//     }
-
-//     games[index].title = req.body.title; // update array element from http request body
-//     return res.status(204).json({ 'msg': 'Game Updated' }); // 204: No Content
-// });
+    await Game.findByIdAndUpdate(req.params.id, req.body);
+    return res.status(204).json({ 'msg': 'Game Updated' }); // 204: No Content
+});
 
 /**
  * @swagger
@@ -125,20 +123,18 @@ router.post('/', async (req: Request, res: Response) => {
  *    responses:
  *      204:
  *        description: Game deleted successfully
- *      404:
- *        description: Game not found
+ *      400:
+ *        description: Id Missing - Bad Request
  */
-// router.delete('/:id', (req: Request, res: Response) => {
-//      // search array for id in url param.  Use == as req.params has a type of "any"
-//     const index: number = games.findIndex(g => g.id == req.params.id);
+router.delete('/:id', async (req: Request, res: Response) => {
+     // validate we have an id value
+    if (!req.params.id) {
+        return res.status(400).json({ 'error': 'Bad Request - Id parameter missing' });
+    }
 
-//     if (index === -1) {
-//         return res.status(404).json({ 'err': 'Game Not Found' });
-//     }
-
-//     games.splice(index, 1);
-//      return res.status(204).json({ 'msg': 'Game Deleted' }); // 204: No Content
-// })
+    await Game.findByIdAndDelete(req.params.id);
+     return res.status(204).json({ 'msg': 'Game Deleted' }); // 204: No Content
+})
 
 // make controller public
 export default router;

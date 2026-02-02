@@ -21,3 +21,7 @@
 `npm i mongoose` - data access lib for MongoDB.  Used in Models
 
 `npm i @types/node --save-dev` - to access "process" obj when reading env vars
+
+## Lesson 5 Notes and NPM Commands
+
+When adding / editing / delete variables from .env, we have to make the same changes in Vercel under Settings / Environment Variables as .env is exculded from GitHub.
