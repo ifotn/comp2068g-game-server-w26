@@ -25,3 +25,7 @@
 ## Lesson 5 Notes and NPM Commands
 
 When adding / editing / delete variables from .env, we have to make the same changes in Vercel under Settings / Environment Variables as .env is exculded from GitHub.
+
+Refactored to add Routes dir + files to separate URL mapping from CRUD logic functions in Controllers.  Follows standard REST API practices in JS/TS dev.
+
+We added child documents in our Game model to nest multiple Reviews inside each Game doc.

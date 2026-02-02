@@ -34,6 +34,27 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const ReviewSchema = new mongoose_1.Schema({
+    reviewer: {
+        type: String,
+        required: [true, 'Reviewer Name Required']
+    },
+    reviewText: {
+        type: String,
+        required: [true, 'Reviewer Text Required'],
+        minLength: 10
+    },
+    rating: {
+        type: Number,
+        required: [true, 'Rating Required'],
+        min: 1,
+        max: 5
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    }
+});
 const GameSchema = new mongoose_1.Schema({
     title: {
         type: String,
@@ -52,7 +73,8 @@ const GameSchema = new mongoose_1.Schema({
     },
     rating: {
         type: String
-    }
+    },
+    reviews: [ReviewSchema]
 });
 // create Model def and make public
 const Game = mongoose_1.default.model('Game', GameSchema);

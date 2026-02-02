@@ -11,8 +11,11 @@ import Game from '../models/game';
  *         description: A list of games
  */
 export const getGames = async (req: Request, res: Response) => {
-    // use model to query mongodb for game docs.  find() gets all docs
-    const games = await Game.find();
+    // use req.query property to check for any url search filter.  returns keys/vals after ? 
+    const filter = req.query;
+
+    // use model to query mongodb for game docs.  find() gets all docs, adding optional filter
+    const games = await Game.find(filter);
 
     if (!games || games.length === 0) {
         return res.status(404).json({ message: 'No games found' });
@@ -120,4 +123,17 @@ export const deleteGame = async (req: Request, res: Response) => {
     await Game.findByIdAndDelete(req.params.id);
      return res.status(204).json({ 'msg': 'Game Deleted' }); // 204: No Content
 };
+
+export const createReview = async (req: Request, res: Response) => {
+    // get id param from url 
+    const id = req.params.id;
+
+    const game = await Game.findByIdAndUpdate(id, {
+        $push: {
+            // ... destructures array into invididual properties
+            reviews: { ...req.body, date: new Date() }
+        }
+    });
+    return res.status(204).json(game);
+}
 
