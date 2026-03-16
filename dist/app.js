@@ -8,8 +8,12 @@ const body_parser_1 = __importDefault(require("body-parser")); // accept json bo
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc")); // api doc generator
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const mongoose_1 = __importDefault(require("mongoose")); // mongodb access lib
-// controllers
+const passport_1 = __importDefault(require("passport"));
+// routers
 const gamesRoutes_1 = __importDefault(require("./routes/gamesRoutes"));
+const usersRoutes_1 = __importDefault(require("./routes/usersRoutes"));
+// models
+const user_1 = require("./models/user");
 const app = (0, express_1.default)();
 // configure app globally to parse http request bodies as json
 app.use(body_parser_1.default.json());
@@ -18,8 +22,15 @@ const dbUri = process.env.DB;
 mongoose_1.default.connect(dbUri)
     .then(() => { console.log('Connected to MongoDB'); })
     .catch((err) => { console.log(`Connection Failed: ${err.message}`); });
+// passport auth config BEFORE routers that will use passport as auth middleware
+app.use(passport_1.default.initialize());
+passport_1.default.use(user_1.User.createStrategy());
+// link passport to session mgmt
+passport_1.default.serializeUser(user_1.User.serializeUser());
+passport_1.default.deserializeUser(user_1.User.deserializeUser());
 // url dispatching
 app.use('/api/v1/games', gamesRoutes_1.default);
+app.use('/api/v1/users', usersRoutes_1.default);
 // swagger api doc config
 const options = {
     definition: {

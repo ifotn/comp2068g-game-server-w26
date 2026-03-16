@@ -3,9 +3,14 @@ import bodyParser from 'body-parser'; // accept json body in POST / PUT requests
 import swaggerJsDoc from 'swagger-jsdoc'; // api doc generator
 import swaggerUi from 'swagger-ui-express';
 import mongoose from 'mongoose';  // mongodb access lib
+import passport from 'passport';
 
-// controllers
+// routers
 import gamesRouter from './routes/gamesRoutes';
+import usersRouter from './routes/usersRoutes';
+
+// models
+import { User } from './models/user';
 
 const app: Application = express();
 
@@ -19,8 +24,18 @@ mongoose.connect(dbUri)
 .then(() => { console.log('Connected to MongoDB') })
 .catch((err: Error) => { console.log(`Connection Failed: ${err.message}`) });
 
+// passport auth config BEFORE routers that will use passport as auth middleware
+app.use(passport.initialize());
+
+passport.use(User.createStrategy());
+
+// link passport to session mgmt
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 // url dispatching
 app.use('/api/v1/games', gamesRouter);
+app.use('/api/v1/users', usersRouter);
 
 // swagger api doc config
 const options = {

@@ -29,3 +29,10 @@ When adding / editing / delete variables from .env, we have to make the same cha
 Refactored to add Routes dir + files to separate URL mapping from CRUD logic functions in Controllers.  Follows standard REST API practices in JS/TS dev.
 
 We added child documents in our Game model to nest multiple Reviews inside each Game doc.
+
+## Lesson 10 Notes and NPM Commands
+
+Libraries for local auth
+```bash
+npm i passport passport-local passport-local-mongoose
+```
