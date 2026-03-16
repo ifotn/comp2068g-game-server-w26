@@ -5,6 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 import mongoose from 'mongoose';  // mongodb access lib
 import passport from 'passport';
 import { Strategy , ExtractJwt } from 'passport-jwt';
+import cookieParser from 'cookie-parser';
 
 // routers
 import gamesRouter from './routes/gamesRoutes';
@@ -17,6 +18,9 @@ const app: Application = express();
 
 // configure app globally to parse http request bodies as json
 app.use(bodyParser.json());
+
+// configure cookie parsing so we can read jwt in cookies for auth
+app.use(cookieParser());
 
 // db connection
 const dbUri = process.env.DB!;

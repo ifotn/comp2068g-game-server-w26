@@ -10,6 +10,7 @@ const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const mongoose_1 = __importDefault(require("mongoose")); // mongodb access lib
 const passport_1 = __importDefault(require("passport"));
 const passport_jwt_1 = require("passport-jwt");
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 // routers
 const gamesRoutes_1 = __importDefault(require("./routes/gamesRoutes"));
 const usersRoutes_1 = __importDefault(require("./routes/usersRoutes"));
@@ -18,6 +19,8 @@ const user_1 = require("./models/user");
 const app = (0, express_1.default)();
 // configure app globally to parse http request bodies as json
 app.use(body_parser_1.default.json());
+// configure cookie parsing so we can read jwt in cookies for auth
+app.use((0, cookie_parser_1.default)());
 // db connection
 const dbUri = process.env.DB;
 mongoose_1.default.connect(dbUri)
