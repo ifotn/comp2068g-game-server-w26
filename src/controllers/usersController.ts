@@ -25,10 +25,32 @@ export const register = async (req: Request, res: Response) => {
         await user.save();
 
         // return response
-        return res.status(201).json(user);
+        return res.status(201).json({ _id: user._id, username: user.username });
         }
     catch (error) {
         return res.status(400).json({ error: error.message });
     }
-    
 };
+
+export const login = async (req: Request, res: Response) => {
+    try {
+        // check username first
+        const user = await User.findOne({ username: req.body.username });
+
+        if (!user) throw new Error();
+
+        // call passport authenticate() fn
+        const result = await user.authenticate(req.body.password);
+
+        if (!result.user) throw new Error;
+
+        return res.status(200).json({ _id: result.user._id, username: result.user.username });
+    }
+    catch (error) {
+        return res.status(401).json({ error: 'Invalid Login' });
+    }
+};
+
+export const logout = async(req: Request, res: Response) => {
+    return res.status(200).json({ message: 'User Logged Out' });
+}
