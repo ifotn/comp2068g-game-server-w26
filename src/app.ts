@@ -4,6 +4,7 @@ import swaggerJsDoc from 'swagger-jsdoc'; // api doc generator
 import swaggerUi from 'swagger-ui-express';
 import mongoose from 'mongoose';  // mongodb access lib
 import passport from 'passport';
+import { Strategy , ExtractJwt } from 'passport-jwt';
 
 // routers
 import gamesRouter from './routes/gamesRoutes';
@@ -32,6 +33,30 @@ passport.use(User.createStrategy());
 // link passport to session mgmt
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+// jwt config
+const jwtOptions = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: process.env.PASSPORT_SECRET
+};
+
+const strategy = new Strategy(jwtOptions, async (jwtPayload, done) => {
+    try {
+        // decrypt token and look up user inside it
+        const user = await User.findById(jwtPayload.id);
+
+        if (!user) throw new Error('Invalid User in Token');
+
+        // user id exists in db, return no error but the user data instead
+        return done(null, user);
+    }
+    catch (error) {
+        // finish callback, returning error but no user data
+        return done(error, null)
+    }
+});
+
+passport.use(strategy);
 
 // url dispatching
 app.use('/api/v1/games', gamesRouter);

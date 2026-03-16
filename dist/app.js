@@ -9,6 +9,7 @@ const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc")); // api doc ge
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const mongoose_1 = __importDefault(require("mongoose")); // mongodb access lib
 const passport_1 = __importDefault(require("passport"));
+const passport_jwt_1 = require("passport-jwt");
 // routers
 const gamesRoutes_1 = __importDefault(require("./routes/gamesRoutes"));
 const usersRoutes_1 = __importDefault(require("./routes/usersRoutes"));
@@ -28,6 +29,26 @@ passport_1.default.use(user_1.User.createStrategy());
 // link passport to session mgmt
 passport_1.default.serializeUser(user_1.User.serializeUser());
 passport_1.default.deserializeUser(user_1.User.deserializeUser());
+// jwt config
+const jwtOptions = {
+    jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: process.env.PASSPORT_SECRET
+};
+const strategy = new passport_jwt_1.Strategy(jwtOptions, async (jwtPayload, done) => {
+    try {
+        // decrypt token and look up user inside it
+        const user = await user_1.User.findById(jwtPayload.id);
+        if (!user)
+            throw new Error('Invalid User in Token');
+        // user id exists in db, return no error but the user data instead
+        return done(null, user);
+    }
+    catch (error) {
+        // finish callback, returning error but no user data
+        return done(error, null);
+    }
+});
+passport_1.default.use(strategy);
 // url dispatching
 app.use('/api/v1/games', gamesRoutes_1.default);
 app.use('/api/v1/users', usersRoutes_1.default);

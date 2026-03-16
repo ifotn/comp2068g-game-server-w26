@@ -1,7 +1,34 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logout = exports.login = exports.register = void 0;
 const user_1 = require("../models/user");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+// jwt fns
+// creates jwt and returns it as a string
+const generateToken = (user) => {
+    const payload = {
+        id: user._id,
+        username: user.username
+    };
+    const jwtOptions = { expiresIn: '1hr' };
+    // create & return jwt, using content in payload, expiry above, and secret for encryption
+    return jsonwebtoken_1.default.sign(payload, process.env.PASSPORT_SECRET, jwtOptions);
+};
+// save jwt to HttpOnly cookie - visible in browser but not modifiable by JS
+const setTokenCookie = (res, token) => {
+    res.cookie('authToken', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None'
+    });
+};
+// remove jwt on logout
+const clearTokenCookie = (res) => {
+    res.clearCookie('authToken');
+};
 const register = async (req, res) => {
     try {
         // duplicate username check
@@ -37,7 +64,11 @@ const login = async (req, res) => {
         const result = await user.authenticate(req.body.password);
         if (!result.user)
             throw new Error;
-        return res.status(200).json({ _id: result.user._id, username: result.user.username });
+        // create jwt containing user info
+        const authToken = generateToken(result.user);
+        // create httponly cookie containing jwt
+        setTokenCookie(res, authToken);
+        return res.status(200).json({ success: true });
     }
     catch (error) {
         return res.status(401).json({ error: 'Invalid Login' });
@@ -45,6 +76,7 @@ const login = async (req, res) => {
 };
 exports.login = login;
 const logout = async (req, res) => {
+    clearTokenCookie(res);
     return res.status(200).json({ message: 'User Logged Out' });
 };
 exports.logout = logout;

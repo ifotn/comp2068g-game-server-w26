@@ -36,3 +36,8 @@ Libraries for local auth
 ```bash
 npm i passport passport-local passport-local-mongoose
 ```
+
+Libraries for JSON Web Token (JWT) auth
+```bash
+npm i jsonwebtoken passport-jwt cookie-parser
+```
