@@ -32,6 +32,8 @@ We added child documents in our Game model to nest multiple Reviews inside each 
 
 ## Lesson 10 Notes and NPM Commands
 
+Add PASSPORT_SECRET string var to .env
+
 Libraries for local auth
 ```bash
 npm i passport passport-local passport-local-mongoose
