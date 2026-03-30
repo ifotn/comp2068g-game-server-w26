@@ -23,10 +23,11 @@ exports.storeOtp = storeOtp;
 const verifyOtp = (username, code) => {
     // search for codes for this user
     const record = otpStore.get(username);
-    record.attempts++;
     // validate
     if (!record)
         throw new Error('OTP not found or expired');
+    record.attempts++;
+    console.log(record);
     if (record.expiresAt < new Date())
         throw new Error('Otp expired');
     if (record.attempts >= record.maxAttempts)

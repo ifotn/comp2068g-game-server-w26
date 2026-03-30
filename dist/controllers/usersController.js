@@ -89,9 +89,11 @@ exports.logout = logout;
 const validateOtp = async (req, res) => {
     try {
         const user = await user_1.User.findOne({ username: req.body.username });
+        console.log(`username: ${req.body.username} | code: ${req.body.code}`);
         if (!user)
             throw new Error('Username not found');
-        const valid = await (0, otpService_1.verifyOtp)(user.username, req.body.otp);
+        const valid = await (0, otpService_1.verifyOtp)(user.username, req.body.code);
+        console.log(`valid: ${valid}`);
         if (!valid)
             throw new Error('Invalid of expired OTP');
         // otp attempt valid => issue cookie w/jwt.  moved from login()
