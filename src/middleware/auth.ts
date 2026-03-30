@@ -22,7 +22,6 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
     try {
         // fetch cookie containing jwt
         const token = req.cookies.authToken;
-        console.log(`${token}: token`);
         
         // no authToken cookie, so no jwt
         if (!token) throw new Error();
