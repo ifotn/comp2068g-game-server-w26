@@ -9,4 +9,5 @@ const router = express_1.default.Router();
 router.post('/register', usersController_1.register);
 router.post('/login', usersController_1.login);
 router.get('/logout', usersController_1.logout);
+router.post('/verify-otp', usersController_1.validateOtp);
 exports.default = router;

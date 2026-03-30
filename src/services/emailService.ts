@@ -4,6 +4,21 @@ interface SendEmailParams {
     html: string;
 }
 
+export const sendOtpEmail = async(username: string, otp: string): Promise<void> => {
+    // create message body including code
+    const htmlContent = `<h1>One-Time Passcode</h1>
+        <p>Your code is:</p>
+        <h2>${otp}</h2>
+        <p>This code expires in 15 minutes</p>`;
+
+    // send email
+    await sendEmail({
+        to: username,
+        subject: 'Login Verification Code',
+        html: htmlContent
+    });
+}
+
 const sendEmail = async (params: SendEmailParams): Promise<void> => {
     try {
         const body = JSON.stringify({ 

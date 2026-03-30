@@ -2,6 +2,9 @@ import express, { Request, Response } from 'express';
 import { User } from '../models/user';
 import jwt from 'jsonwebtoken';
 
+import { generateOtp, storeOtp, verifyOtp, clearOtp } from '../services/otpService';
+import { sendOtpEmail } from '../services/emailService';
+
 // jwt fns
 
 // creates jwt and returns it as a string
@@ -74,13 +77,18 @@ export const login = async (req: Request, res: Response) => {
 
         if (!result.user) throw new Error;
 
+        // create / send otp for 2fa
+        const otp: string = await generateOtp(user.username);
+        storeOtp(user.username, otp);
+        await sendOtpEmail(user.username, otp);
+
         // create jwt containing user info
-        const authToken: string = generateToken(result.user);
+        // const authToken: string = generateToken(result.user);
 
-        // create httponly cookie containing jwt
-        setTokenCookie(res, authToken);
+        // // create httponly cookie containing jwt
+        // setTokenCookie(res, authToken);
 
-        return res.status(200).json({ success: true });
+        return res.status(200).json({ success: true, otpSent: true });
     }
     catch (error) {
         return res.status(401).json({ error: 'Invalid Login' });
@@ -90,4 +98,22 @@ export const login = async (req: Request, res: Response) => {
 export const logout = async(req: Request, res: Response) => {
     clearTokenCookie(res);
     return res.status(200).json({ message: 'User Logged Out' });
+}
+
+export const validateOtp = async(req: Request, res: Response) => {
+    try {
+        const user = await User.findOne({ username: req.body.username });
+        if (!user) throw new Error('Username not found');
+
+        const valid: boolean = await verifyOtp(user.username, req.body.otp);
+        if (!valid) throw new Error('Invalid of expired OTP');
+
+        // otp attempt valid => issue cookie w/jwt.  moved from login()
+        const authToken: string = generateToken(user);
+        setTokenCookie(res, authToken);
+        return res.status(200).json({ success: true });
+    }
+    catch (error) {
+        return res.status(401).json({ error: error.message ?? 'Unauthorized' });
+    }
 }

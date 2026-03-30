@@ -1,3 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sendOtpEmail = void 0;
+const sendOtpEmail = async (username, otp) => {
+    // create message body including code
+    const htmlContent = `<h1>One-Time Passcode</h1>
+        <p>Your code is:</p>
+        <h2>${otp}</h2>
+        <p>This code expires in 15 minutes</p>`;
+    // send email
+    await sendEmail({
+        to: username,
+        subject: 'Login Verification Code',
+        html: htmlContent
+    });
+};
+exports.sendOtpEmail = sendOtpEmail;
 const sendEmail = async (params) => {
     try {
         const body = JSON.stringify({

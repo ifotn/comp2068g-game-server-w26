@@ -3,9 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logout = exports.login = exports.register = void 0;
+exports.validateOtp = exports.logout = exports.login = exports.register = void 0;
 const user_1 = require("../models/user");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const otpService_1 = require("../services/otpService");
+const emailService_1 = require("../services/emailService");
 // jwt fns
 // creates jwt and returns it as a string
 const generateToken = (user) => {
@@ -64,11 +66,15 @@ const login = async (req, res) => {
         const result = await user.authenticate(req.body.password);
         if (!result.user)
             throw new Error;
+        // create / send otp for 2fa
+        const otp = await (0, otpService_1.generateOtp)(user.username);
+        (0, otpService_1.storeOtp)(user.username, otp);
+        await (0, emailService_1.sendOtpEmail)(user.username, otp);
         // create jwt containing user info
-        const authToken = generateToken(result.user);
-        // create httponly cookie containing jwt
-        setTokenCookie(res, authToken);
-        return res.status(200).json({ success: true });
+        // const authToken: string = generateToken(result.user);
+        // // create httponly cookie containing jwt
+        // setTokenCookie(res, authToken);
+        return res.status(200).json({ success: true, otpSent: true });
     }
     catch (error) {
         return res.status(401).json({ error: 'Invalid Login' });
@@ -80,3 +86,21 @@ const logout = async (req, res) => {
     return res.status(200).json({ message: 'User Logged Out' });
 };
 exports.logout = logout;
+const validateOtp = async (req, res) => {
+    try {
+        const user = await user_1.User.findOne({ username: req.body.username });
+        if (!user)
+            throw new Error('Username not found');
+        const valid = await (0, otpService_1.verifyOtp)(user.username, req.body.otp);
+        if (!valid)
+            throw new Error('Invalid of expired OTP');
+        // otp attempt valid => issue cookie w/jwt.  moved from login()
+        const authToken = generateToken(user);
+        setTokenCookie(res, authToken);
+        return res.status(200).json({ success: true });
+    }
+    catch (error) {
+        return res.status(401).json({ error: error.message ?? 'Unauthorized' });
+    }
+};
+exports.validateOtp = validateOtp;
